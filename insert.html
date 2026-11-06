@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Book | Shareef</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="brand">📚 Shareef</div>
+    <nav><a href="index.html">Home</a><a href="list.html">All Books</a><a href="listOne.html">Search Book</a><a class="active" href="insert.html">Add Book</a><a href="update.html">Update Book</a><a href="delete.html">Delete Book</a></nav>
+  </header>
+  <main class="page">
+    <div class="page-heading"><span class="eyebrow">INVENTORY</span><h1>Add a book</h1><p>Enter the book details below to add it to your bookstore.</p></div>
+    <section class="panel form-panel">
+      <form id="bookForm">
+        <div class="form-grid">
+          <label>Book ID<input type="number" id="book_id" min="1" placeholder="e.g. 101" required></label>
+          <label>Title<input type="text" id="title" placeholder="Enter book title" required></label>
+          <label>Author<input type="text" id="author" placeholder="Enter author name" required></label>
+          <label>Category
+            <select id="category" required>
+              <option value="">Choose a category</option>
+              <option>Fiction</option><option>Non-fiction</option><option>Science</option><option>Technology</option><option>Education</option><option>Biography</option><option>History</option><option>Children</option><option>Fantasy</option><option>Mystery</option><option>Self-help</option><option>Other</option>
+            </select>
+          </label>
+          <label>Price (₹)<input type="number" id="price" min="0" step="0.01" placeholder="e.g. 299.00" required></label>
+          <label>Stock quantity<input type="number" id="stock" min="0" step="1" placeholder="e.g. 25" required></label>
+        </div>
+        <div class="form-actions"><button class="btn primary" type="submit">Save Book</button><button class="btn secondary" type="reset">Clear Form</button><a class="btn text-btn" href="index.html">Cancel</a></div>
+        <p id="message" class="message" role="status"></p>
+      </form>
+    </section>
+    <p class="hint">This form sends data to <code>/books</code>. Make sure your backend API is running.</p>
+  </main>
+  <script>
+    document.getElementById("bookForm").addEventListener("submit", async function (event) {
+      event.preventDefault();
+      const book = {
+        book_id: Number(document.getElementById("book_id").value),
+        title: document.getElementById("title").value.trim(),
+        author: document.getElementById("author").value.trim(),
+        category: document.getElementById("category").value,
+        price: Number(document.getElementById("price").value),
+        stock: Number(document.getElementById("stock").value)
+      };
+      const message = document.getElementById("message");
+      try {
+        const response = await fetch("/books", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(book)
+        });
+        const text = await response.text();
+        if (!response.ok) throw new Error(text || "Could not save book.");
+        message.textContent = text || "Book saved successfully.";
+        message.className = "message success";
+        this.reset();
+      } catch (error) {
+        message.textContent = "Could not connect to /books. Check that your backend is running. " + error.message;
+        message.className = "message error";
+      }
+    });
+  </script>
+</body>
+</html>

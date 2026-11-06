@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Delete Book | Shareef</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site-header"><div class="brand">📚 Shareef</div><nav><a href="index.html">Home</a><a href="list.html">All Books</a><a href="listOne.html">Search Book</a><a href="insert.html">Add Book</a><a href="update.html">Update Book</a><a class="active" href="delete.html">Delete Book</a></nav></header>
+<main class="page"><div class="page-heading"><span class="eyebrow">INVENTORY CONTROL</span><h1>Delete a book</h1><p>Remove a book from your collection using its ID.</p></div>
+<section class="panel form-panel"><div class="warning-icon">!</div><form id="deleteForm"><label>Book ID<input id="book_id" type="number" min="1" placeholder="Enter book ID to delete" required></label><p class="hint">This action may permanently remove the selected book.</p><button class="btn danger" type="submit">Delete Book</button><p id="message" class="message"></p></form></section></main>
+<script>
+document.getElementById("deleteForm").addEventListener("submit",async e=>{
+ e.preventDefault();const id=document.getElementById("book_id").value,msg=document.getElementById("message");
+ if(!confirm("Are you sure you want to delete book ID "+id+"?"))return;
+ try{const r=await fetch("/books/"+encodeURIComponent(id),{method:"DELETE"});const t=await r.text();if(!r.ok)throw new Error(t||"Could not delete book.");msg.textContent=t||"Book deleted successfully.";msg.className="message success";e.target.reset();}
+ catch(err){msg.textContent="Could not delete book. Check your backend API. "+err.message;msg.className="message error";}
+});
+</script></body></html>

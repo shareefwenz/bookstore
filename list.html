@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>All Books | Shareef</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site-header"><div class="brand">📚 Shareef</div><nav><a href="index.html">Home</a><a class="active" href="list.html">All Books</a><a href="listOne.html">Search Book</a><a href="insert.html">Add Book</a><a href="update.html">Update Book</a><a href="delete.html">Delete Book</a></nav></header>
+<main class="page"><div class="page-heading"><span class="eyebrow">YOUR COLLECTION</span><h1>All books</h1><p>View the books currently stored in your inventory.</p></div>
+<section class="panel"><div class="toolbar"><h2>Book inventory</h2><button class="btn primary" onclick="loadBooks()">↻ Refresh list</button></div>
+<div class="table-wrap"><table><thead><tr><th>Book ID</th><th>Title</th><th>Author</th><th>Category</th><th>Price (₹)</th><th>Stock</th></tr></thead><tbody id="bookRows"><tr><td colspan="6">Loading books…</td></tr></tbody></table></div><p id="message" class="message"></p></section></main>
+<script>
+async function loadBooks() {
+ const rows=document.getElementById("bookRows"), msg=document.getElementById("message");
+ rows.innerHTML='<tr><td colspan="6">Loading books…</td></tr>'; msg.textContent='';
+ try {
+  const response=await fetch("/books");
+  if(!response.ok) throw new Error("Request failed: "+response.status);
+  const books=await response.json();
+  rows.innerHTML="";
+  if(!books.length){rows.innerHTML='<tr><td colspan="6">No books found. Add your first book.</td></tr>';return;}
+  books.forEach(b=>{
+   const tr=document.createElement("tr");
+   [b.book_id,b.title,b.author,b.category,b.price,b.stock].forEach(value=>{const td=document.createElement("td");td.textContent=value ?? "";tr.appendChild(td);});
+   rows.appendChild(tr);
+  });
+ } catch(e){rows.innerHTML='<tr><td colspan="6">Could not load books. Check that the backend API is running.</td></tr>';msg.textContent=e.message;msg.className="message error";}
+}
+loadBooks();
+</script></body></html>

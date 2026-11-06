@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Update Book | Shareef</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header class="site-header"><div class="brand">📚 Shareef</div><nav><a href="index.html">Home</a><a href="list.html">All Books</a><a href="listOne.html">Search Book</a><a href="insert.html">Add Book</a><a class="active" href="update.html">Update Book</a><a href="delete.html">Delete Book</a></nav></header>
+<main class="page"><div class="page-heading"><span class="eyebrow">KEEP IT UPDATED</span><h1>Update book details</h1><p>Choose a book ID and edit the fields you want to update.</p></div>
+<section class="panel form-panel"><form id="updateForm"><div class="form-grid">
+<label>Book ID<input id="book_id" type="number" min="1" placeholder="Book ID to update" required></label>
+<label>Title<input id="title" type="text" placeholder="Enter updated title" required></label>
+<label>Author<input id="author" type="text" placeholder="Enter updated author" required></label>
+<label>Category<select id="category" required><option value="">Choose a category</option><option>Fiction</option><option>Non-fiction</option><option>Science</option><option>Technology</option><option>Education</option><option>Biography</option><option>History</option><option>Children</option><option>Fantasy</option><option>Mystery</option><option>Self-help</option><option>Other</option></select></label>
+<label>Price (₹)<input id="price" type="number" min="0" step="0.01" placeholder="Updated price" required></label>
+<label>Stock quantity<input id="stock" type="number" min="0" step="1" placeholder="Updated stock" required></label>
+</div><div class="form-actions"><button class="btn primary" type="submit">Update Book</button><button class="btn secondary" type="reset">Clear Form</button></div><p id="message" class="message"></p></form></section></main>
+<script>
+document.getElementById("updateForm").addEventListener("submit",async function(e){
+ e.preventDefault();const id=document.getElementById("book_id").value;
+ const book={book_id:Number(id),title:document.getElementById("title").value.trim(),author:document.getElementById("author").value.trim(),category:document.getElementById("category").value,price:Number(document.getElementById("price").value),stock:Number(document.getElementById("stock").value)};
+ const msg=document.getElementById("message");
+ try{const r=await fetch("/books/"+encodeURIComponent(id),{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(book)});const t=await r.text();if(!r.ok)throw new Error(t||"Could not update book.");msg.textContent=t||"Book updated successfully.";msg.className="message success";}
+ catch(err){msg.textContent="Could not update book. Check your backend API. "+err.message;msg.className="message error";}
+});
+</script></body></html>
